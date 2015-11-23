@@ -1,0 +1,44 @@
+package com.andylahs.steamshots.controller;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import com.andylahs.steamshots.model.Screenshot;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+public class ScrListAsyncTask extends HttpAsyncTask {
+
+  private static final String LOG_TAG = ScrListAsyncTask.class.getSimpleName();
+
+  Context context;
+
+  @Override
+  protected void onPostExecute(String stream) {
+    DatabaseManager databaseManager = new DatabaseManager(context);
+    ArrayList<Screenshot> screenshotList;
+    screenshotList = new ArrayList<>();
+    try {
+      JSONArray jsonArray = new JSONArray(stream);
+//      databaseManager.open();
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        Screenshot screenshot = new Screenshot();
+        screenshot.setThumbnailLink(jsonObject.getString("thumb"));
+        screenshot.setPageLink(jsonObject.getString("link"));
+        screenshot.setDescription((jsonObject.getString("desc")));
+        screenshotList.add(screenshot);
+      }
+    } catch (JSONException e) {
+      Log.e(LOG_TAG, "JSON PROBLEM!!!", e);
+    }
+//    databaseManager.close();
+    httpReturnListener.onHttpReturn(screenshotList);
+  }
+
+}
