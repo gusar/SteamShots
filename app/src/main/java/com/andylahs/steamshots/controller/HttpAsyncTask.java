@@ -23,8 +23,8 @@ public class HttpAsyncTask extends AsyncTask<String, Long, String> {
       try {
         URL url;
 //        url = new URL(params[0]);
-//        url = new URL("http://andylahs.com:2080/screens?user=truegusar");
-        url = new URL("http://andylahs.com:2080/screens?user=ovmise");
+        url = new URL("http://andylahs.com:2080/screens?user=truegusar");
+//        url = new URL("http://andylahs.com:2080/screens?user=ovmise");
         return connectionManager.getHttpStream(url);
       } catch (MalformedURLException e) {
         Log.e(LOG_TAG, "URL CANNOT BE CREATED FROM STRING: " + params[0], e);

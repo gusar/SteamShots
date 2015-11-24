@@ -1,18 +1,18 @@
 package com.andylahs.steamshots.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.controller.HttpReturnListener;
@@ -21,8 +21,11 @@ import com.andylahs.steamshots.model.Screenshot;
 
 import java.util.ArrayList;
 
-public class UserScreenshotsActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener, HttpReturnListener {
+public class UserScreenshotsActivity extends BaseActivity implements HttpReturnListener {
+
+  private static final String LOG_TAG = UserScreenshotsActivity.class.getSimpleName();
+  private RecyclerView recyclerView;
+  private ScreenshotRecyclerViewAdapter recyclerViewAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +34,40 @@ public class UserScreenshotsActivity extends AppCompatActivity
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+    WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+    wm.getDefaultDisplay().getMetrics(displayMetrics);
+//    int screenWidth = displayMetrics.widthPixels;
+    int screenHeight = displayMetrics.heightPixels;
+
+    /*
+    *
+    * */
+
+    recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+    recyclerView.addItemDecoration(new MarginDecoration(this));
+//    recyclerView.setHasFixedSize(true);
+    recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+    recyclerViewAdapter = new ScreenshotRecyclerViewAdapter(
+        UserScreenshotsActivity.this,
+        new ArrayList<Screenshot>(),
+        screenHeight
+    );
+    recyclerView.setAdapter(recyclerViewAdapter);
+
     ScrListAsyncTask scrListAsyncTask = new ScrListAsyncTask();
     scrListAsyncTask.setOnHttpReturnListener(this);
     scrListAsyncTask.execute();
+
+    /*
+    *
+    * */
 
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Hello!", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
+        Snackbar.make(view, "haha", Snackbar.LENGTH_LONG).setAction("Action", null).show();
       }
     });
 
@@ -55,67 +82,22 @@ public class UserScreenshotsActivity extends AppCompatActivity
 
   }
 
-  @Override
-  public void onHttpReturn(ArrayList<Screenshot> objectList) {
-    for (Screenshot object: objectList) {
-      Log.v("SCREENSHOT: ", object.getPageLink());
-    }
-  }
+//  @Override
+//  protected void onResume() {
+//    super.onResume();
+//
+//    ScrListAsyncTask scrListAsyncTask = new ScrListAsyncTask();
+//    scrListAsyncTask.setOnHttpReturnListener(this);
+//    scrListAsyncTask.execute();
+//  }
+
 
   @Override
-  public void onBackPressed() {
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    if (drawer.isDrawerOpen(GravityCompat.START)) {
-      drawer.closeDrawer(GravityCompat.START);
-    } else {
-      super.onBackPressed();
-    }
+  public void onHttpReturn(ArrayList<Screenshot> screenshotArrayList) {
+//    for (Screenshot object: objectList) {
+//      Log.v("SCREENSHOT: ", object.getPageLink());
+//    }
+    recyclerViewAdapter.loadScreenshots(screenshotArrayList);
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.main, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
-  @SuppressWarnings("StatementWithEmptyBody")
-  @Override
-  public boolean onNavigationItemSelected(MenuItem item) {
-    // Handle navigation view item clicks here.
-    int id = item.getItemId();
-
-    if (id == R.id.nav_camara) {
-      // Handle the camera action
-    } else if (id == R.id.nav_gallery) {
-
-    } else if (id == R.id.nav_slideshow) {
-
-    } else if (id == R.id.nav_manage) {
-
-    } else if (id == R.id.nav_share) {
-
-    } else if (id == R.id.nav_send) {
-
-    }
-
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    drawer.closeDrawer(GravityCompat.START);
-    return true;
-  }
 }
