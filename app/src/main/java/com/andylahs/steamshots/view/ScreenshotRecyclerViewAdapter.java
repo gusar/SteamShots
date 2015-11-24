@@ -52,6 +52,11 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
     holder.caption.setText(screenshot.getDescription());
   }
 
+  public void loadScreenshots(ArrayList<Screenshot> newScreenshotList) {
+    screenshotList = newScreenshotList;
+    notifyDataSetChanged();
+  }
+
   @Override
   public int getItemCount() {
     return (null != screenshotList ? screenshotList.size() : 0);
