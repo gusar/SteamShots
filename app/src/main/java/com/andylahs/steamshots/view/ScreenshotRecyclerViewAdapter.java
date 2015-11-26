@@ -2,6 +2,7 @@ package com.andylahs.steamshots.view;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,9 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
     String description = screenshot.getDescription();
     if (!(description.equals("null"))) {
       holder.caption.setText(description);
+      holder.caption.setBackgroundColor(Color.parseColor("#70000000"));
+    } else {
+      holder.caption.setBackgroundColor(Color.parseColor("#00000000"));
     }
   }
 
