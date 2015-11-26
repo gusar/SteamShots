@@ -58,6 +58,7 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
         .error(R.drawable.placeholder)
         .placeholder(R.drawable.placeholder_s)
         .into(holder.thumbnail);
+
     String description = screenshot.getDescription();
     if (!(description.equals("null"))) {
       holder.caption.setText(description);

@@ -2,7 +2,7 @@ package com.andylahs.steamshots.model;
 
 public class Screenshot {
 
-  String pageLink;
+  String id;
   String thumbnailLink;
   String hqLink;
   String description;
@@ -10,12 +10,12 @@ public class Screenshot {
   public Screenshot() {
   }
 
-  public String getPageLink() {
-    return pageLink;
+  public String getId() {
+    return id;
   }
 
-  public void setPageLink(String pageLink) {
-    this.pageLink = pageLink;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getThumbnailLink() {

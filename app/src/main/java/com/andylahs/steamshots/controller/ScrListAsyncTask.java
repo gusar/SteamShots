@@ -30,7 +30,7 @@ public class ScrListAsyncTask extends HttpAsyncTask {
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         Screenshot screenshot = new Screenshot();
         screenshot.setThumbnailLink(jsonObject.getString("thumb"));
-        screenshot.setPageLink(jsonObject.getString("link"));
+        screenshot.setId(jsonObject.getString("id"));
         screenshot.setDescription((jsonObject.getString("desc")));
         screenshotList.add(screenshot);
       }
