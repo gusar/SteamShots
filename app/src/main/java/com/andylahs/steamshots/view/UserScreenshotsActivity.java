@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,6 +30,7 @@ import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.adapter.ScreenshotRecyclerViewAdapter;
 import com.andylahs.steamshots.async.ScrListAsyncTask;
 import com.andylahs.steamshots.async.ScrReturnListener;
+import com.andylahs.steamshots.database.DatabaseManager;
 import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.preferences.AppPreferences;
 
@@ -137,12 +141,15 @@ public class UserScreenshotsActivity extends BaseActivity implements
   }
 
 
+  ArrayList<Screenshot> scrList;
   @Override
   public void onHttpReturn(ArrayList<Screenshot> screenshotArrayList) {
+    scrList = new ArrayList<>();
     if (screenshotArrayList.size() < 1) {
       Log.d(LOG_TAG, "NO DATA RETURNED");
     } else {
       Log.d(LOG_TAG, Integer.toString(screenshotArrayList.size()));
+      scrList = screenshotArrayList;
     }
     recyclerViewAdapter.loadScreenshots(screenshotArrayList);
   }
@@ -195,8 +202,33 @@ public class UserScreenshotsActivity extends BaseActivity implements
     //noinspection SimplifiableIfStatement
     if (id == R.id.search) {
       return true;
+    } else if (id == R.id.doFavourite) {
+      DatabaseManager databaseManager = new DatabaseManager(this);
+      databaseManager.open();
+      databaseManager.insert(AppPreferences.getProfilePreference(this), scrList);
+      databaseManager.close();
+      CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+      Snackbar.make(coordinatorLayout, "User added to favourites", Snackbar.LENGTH_LONG).show();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
+
+  @SuppressWarnings("StatementWithEmptyBody")
+  @Override
+  public boolean onNavigationItemSelected(MenuItem item) {
+    // Handle navigation view item clicks here.
+    int id = item.getItemId();
+
+    if (id == R.id.nav_favourites) {
+      Intent intent = new Intent(UserScreenshotsActivity.this, FavouriteUsersActivity.class);
+      startActivity(intent);
+    } else if (id == R.id.nav_gallery) {
     }
 
-    return super.onOptionsItemSelected(item);
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
   }
 }

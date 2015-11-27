@@ -3,6 +3,7 @@ package com.andylahs.steamshots.view;
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -20,14 +21,18 @@ public class FavouriteUsersActivity extends ListActivity {
   private DatabaseManager databaseManager;
   ArrayList<String> selectedForDeletion;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_favourites);
 
+
     FavouriteUsersAdapter favouriteUsersAdapter;
     favouriteUsersAdapter = new FavouriteUsersAdapter(getFavouriteUsersHashMap());
     setListAdapter(favouriteUsersAdapter);
+
+    Log.d(LOG_TAG, "onCreate Done...");
   }
 
 
@@ -47,6 +52,14 @@ public class FavouriteUsersActivity extends ListActivity {
   @Override
   protected void onListItemClick(ListView l, View v, int position, long id) {
     Map.Entry<String, Boolean> selectedUser = (Map.Entry<String, Boolean>) l.getItemAtPosition(position);
-    if (selectedUser.getValue());
+//    String username = selectedUser.getKey();
+//    if (!selectedUser.getValue()) {
+//      if (!selectedForDeletion.contains(username)) {
+//        selectedForDeletion.add(username);
+//        l.
+//      }
+//    } else {
+//      selectedForDeletion
+//    }
   }
 }

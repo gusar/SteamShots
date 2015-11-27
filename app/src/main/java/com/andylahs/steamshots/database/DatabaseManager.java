@@ -8,17 +8,21 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.andylahs.steamshots.model.Screenshot;
+
+import java.util.ArrayList;
+
 
 public class DatabaseManager {
+
+  private static final String LOG_TAG = DatabaseManager.class.getSimpleName();
   private DatabaseModel databaseModel;
-
   private Context context;
-
-
   private SQLiteDatabase database;
 
   public DatabaseManager(Context context) {
     this.context = context;
+    Log.d(LOG_TAG, "manager created");
   }
 
   public DatabaseManager open() {
@@ -41,18 +45,25 @@ public class DatabaseManager {
     }
   }
 
-  public void insert(String username, String imageId, String thumbnailLink, String description) {
-    ContentValues contentValue = new ContentValues();
-    contentValue.put(DatabaseModel.USERNAME, username);
-    contentValue.put(DatabaseModel.IMAGE_ID, imageId);
-    contentValue.put(DatabaseModel.THUMBNAIL_LINK, thumbnailLink);
-    contentValue.put(DatabaseModel.HQ_LINK, "");
-    contentValue.put(DatabaseModel.DESCRIPTION, description);
+  public void insert(String username, ArrayList<Screenshot> screenshots) {
+    Log.d(LOG_TAG, "Username: " + username + " Quantity: " + screenshots.size());
+    for (int i = 0; i < screenshots.size(); i++) {
+      Screenshot screenshot = screenshots.get(i);
+      String imageId = screenshot.getId();
+      String thumbnailLink = screenshot.getThumbnailLink();
+      String description = screenshot.getDescription();
+      ContentValues contentValue = new ContentValues();
+      contentValue.put(DatabaseModel.USERNAME, username);
+      contentValue.put(DatabaseModel.IMAGE_ID, imageId);
+      contentValue.put(DatabaseModel.THUMBNAIL_LINK, thumbnailLink);
+      contentValue.put(DatabaseModel.HQ_LINK, "");
+      contentValue.put(DatabaseModel.DESCRIPTION, description);
 
-    try {
-      database.insert(DatabaseModel.TABLE_NAME, null, contentValue);
-    } catch (SQLException e) {
-      Log.e("DBManager: ", "", e);
+      try {
+        database.insert(DatabaseModel.TABLE_NAME, null, contentValue);
+      } catch (SQLException e) {
+        Log.e("DBManager: ", "", e);
+      }
     }
   }
 
