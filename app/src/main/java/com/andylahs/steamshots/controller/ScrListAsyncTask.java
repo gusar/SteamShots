@@ -17,6 +17,16 @@ public class ScrListAsyncTask extends HttpAsyncTask {
   private static final String LOG_TAG = ScrListAsyncTask.class.getSimpleName();
 
   Context context;
+  ScrReturnListener scrReturnListener;
+
+  public String setLinkPrefix() {
+    return "http://188.226.204.13/screens?user=";
+  }
+
+  public void setOnHttpReturnListener (ScrReturnListener listener) {
+    this.scrReturnListener = listener;
+  }
+
 
   @Override
   protected void onPostExecute(String stream) {
@@ -38,7 +48,7 @@ public class ScrListAsyncTask extends HttpAsyncTask {
       Log.e(LOG_TAG, "JSON PROBLEM!!!", e);
     }
 //    databaseManager.close();
-    httpReturnListener.onHttpReturn(screenshotList);
+    scrReturnListener.onHttpReturn(screenshotList);
   }
 
 }

@@ -24,8 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.andylahs.steamshots.R;
-import com.andylahs.steamshots.controller.HttpReturnListener;
-import com.andylahs.steamshots.controller.RecyclerItemClickListener;
+import com.andylahs.steamshots.controller.ScrReturnListener;
 import com.andylahs.steamshots.controller.ScrListAsyncTask;
 import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.preferences.AppPreferences;
@@ -33,7 +32,7 @@ import com.andylahs.steamshots.preferences.AppPreferences;
 import java.util.ArrayList;
 
 public class UserScreenshotsActivity extends BaseActivity implements
-    HttpReturnListener,
+    ScrReturnListener,
     SearchView.OnQueryTextListener {
 
   private static final String LOG_TAG = UserScreenshotsActivity.class.getSimpleName();
@@ -64,12 +63,14 @@ public class UserScreenshotsActivity extends BaseActivity implements
 
     processSearch(screenHeight, savedProfile);
     loadRefreshLayout();
-
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        searchView.setIconified(false);
+//        searchView.setIconified(false);
+        Intent intent = new Intent(UserScreenshotsActivity.this, ProfileWebView.class);
+        intent.putExtra("profile", AppPreferences.getProfilePreference(getApplicationContext()));
+        startActivity(intent);
       }
     });
 
@@ -127,18 +128,6 @@ public class UserScreenshotsActivity extends BaseActivity implements
         screenHeight
     );
     recyclerView.setAdapter(recyclerViewAdapter);
-    recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, recyclerView,
-        new RecyclerItemClickListener.OnItemClickListener() {
-          @Override
-          public void onItemClick(View view, int position) {
-            Log.d(LOG_TAG, "Item " + position + "clicked!");
-            Intent intent = new Intent(UserScreenshotsActivity.this, DetailsActivity.class);
-            intent.putExtra(SCREENSHOT_TRANSFER, recyclerViewAdapter.getScreenshot(position));
-            startActivity(intent);
-          }
-        }
-    ));
-    Log.d(LOG_TAG, "< Adapter and Listener Set Up >");
 
     ScrListAsyncTask scrListAsyncTask = new ScrListAsyncTask();
     scrListAsyncTask.setOnHttpReturnListener(this);

@@ -3,12 +3,16 @@ package com.andylahs.steamshots.view;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.andylahs.steamshots.R;
+import com.andylahs.steamshots.model.Screenshot;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -32,26 +36,30 @@ public class DetailsActivity extends Activity {
    * and a change of the status and navigation bar.
    */
   private static final int UI_ANIMATION_DELAY = 300;
+  private static final String LOG_TAG = DetailsActivity.class.getSimpleName();
 
-  private View mContentView;
+  private ImageView mContentView;
   private View mControlsView;
   private boolean mVisible;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     setContentView(R.layout.activity_details);
+
+    Intent intent = getIntent();
+    Screenshot screenshot = (Screenshot) intent.getSerializableExtra("PHOTO_TRANSFER");
 
     mVisible = true;
     mControlsView = findViewById(R.id.fullscreen_content_controls);
-    mContentView = findViewById(R.id.fullscreen_content);
-
+    mContentView = (ImageView) findViewById(R.id.fullscreen_content);
+//    Picasso.with(this).load(photo.get)
 
     // Set up the user interaction to manually show or hide the system UI.
     mContentView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+        Log.d(LOG_TAG, "CONTENT CLICKED");
         toggle();
       }
     });
@@ -59,7 +67,7 @@ public class DetailsActivity extends Activity {
     // Upon interacting with UI controls, delay any scheduled hide()
     // operations to prevent the jarring behavior of controls going away
     // while interacting with the UI.
-    findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+    findViewById(R.id.fullscreen_caption).setOnTouchListener(mDelayHideTouchListener);
   }
 
   @Override

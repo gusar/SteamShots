@@ -2,6 +2,7 @@ package com.andylahs.steamshots.view;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -50,7 +51,7 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
 
   @Override
   public void onBindViewHolder(ViewHolder holder, int position) {
-    Screenshot screenshot = screenshotList.get(position);
+    final Screenshot screenshot = screenshotList.get(position);
 //    Log.d(LOG_TAG, "Processing: " + screenshot.getPageLink() + " --> " + Integer.toString(position));
 
     Picasso.with(context)
@@ -58,6 +59,15 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
         .error(R.drawable.placeholder)
         .placeholder(R.drawable.placeholder_s)
         .into(holder.thumbnail);
+
+    holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(context, DetailsActivity.class);
+        intent.putExtra("SCREENSHOT_TRANSFER", screenshot);
+        context.startActivity(intent);
+      }
+    });
 
     String description = screenshot.getDescription();
     if (!(description.equals("null"))) {

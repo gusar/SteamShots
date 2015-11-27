@@ -37,6 +37,8 @@
             android:label="@string/title_activity_details"
             android:theme="@style/FullscreenTheme">
         </activity>
+        <activity android:name=".view.ProfileWebView">
+        </activity>
     </application>
 
 </manifest>
