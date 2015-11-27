@@ -1,4 +1,4 @@
-package com.andylahs.steamshots.view;
+package com.andylahs.steamshots.adapter;
 
 
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.model.Screenshot;
+import com.andylahs.steamshots.view.DetailsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

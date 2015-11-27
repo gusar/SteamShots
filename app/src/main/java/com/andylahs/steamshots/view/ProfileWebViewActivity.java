@@ -7,7 +7,7 @@ import android.webkit.WebViewClient;
 
 import com.andylahs.steamshots.R;
 
-public class ProfileWebView extends AppCompatActivity {
+public class ProfileWebViewActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

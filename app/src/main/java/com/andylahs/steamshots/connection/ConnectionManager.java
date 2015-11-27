@@ -1,4 +1,4 @@
-package com.andylahs.steamshots.controller;
+package com.andylahs.steamshots.connection;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

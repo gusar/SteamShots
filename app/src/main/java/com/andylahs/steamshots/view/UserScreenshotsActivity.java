@@ -24,8 +24,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.andylahs.steamshots.R;
-import com.andylahs.steamshots.controller.ScrListAsyncTask;
-import com.andylahs.steamshots.controller.ScrReturnListener;
+import com.andylahs.steamshots.adapter.ScreenshotRecyclerViewAdapter;
+import com.andylahs.steamshots.async.ScrListAsyncTask;
+import com.andylahs.steamshots.async.ScrReturnListener;
 import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.preferences.AppPreferences;
 
@@ -67,7 +68,7 @@ public class UserScreenshotsActivity extends BaseActivity implements
       @Override
       public void onClick(View view) {
 //        searchView.setIconified(false);
-        Intent intent = new Intent(UserScreenshotsActivity.this, ProfileWebView.class);
+        Intent intent = new Intent(UserScreenshotsActivity.this, ProfileWebViewActivity.class);
         intent.putExtra("profile", AppPreferences.getProfilePreference(getApplicationContext()));
         startActivity(intent);
       }

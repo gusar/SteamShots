@@ -1,8 +1,10 @@
-package com.andylahs.steamshots.controller;
+package com.andylahs.steamshots.async;
 
 
 import android.content.Context;
 import android.util.Log;
+
+import com.andylahs.steamshots.database.DatabaseManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

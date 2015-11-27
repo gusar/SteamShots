@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.andylahs.steamshots.R;
-import com.andylahs.steamshots.controller.ScrDetailsAsyncTask;
-import com.andylahs.steamshots.controller.StringReturnListener;
+import com.andylahs.steamshots.async.ScrDetailsAsyncTask;
+import com.andylahs.steamshots.async.StringReturnListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.andylahs.steamshots.controller;
+package com.andylahs.steamshots.async;
 
 
 import java.util.ArrayList;
