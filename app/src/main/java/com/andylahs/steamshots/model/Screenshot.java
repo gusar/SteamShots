@@ -7,6 +7,7 @@ public class Screenshot implements Serializable {
   private static final long serialVersionUID = 1L;
 
   String id;
+  String username;
   String thumbnailLink;
   String hqLink;
   String description;
@@ -16,6 +17,14 @@ public class Screenshot implements Serializable {
 
   public static long getSerialVersionUID() {
     return serialVersionUID;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public String getId() {
