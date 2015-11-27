@@ -15,6 +15,10 @@ import com.andylahs.steamshots.database.DatabaseManager;
 
 import java.util.ArrayList;
 
+/*
+* This activity shows saved usernames from the database, and allows to delete or update them.
+* */
+
 public class FavouriteUsersActivity extends AppCompatActivity {
 
   private static final String LOG_TAG = FavouriteUsersActivity.class.getSimpleName();

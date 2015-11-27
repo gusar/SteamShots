@@ -9,6 +9,9 @@ import com.andylahs.steamshots.connection.ConnectionManager;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/*
+* All asynctasks inherit fro the base asynctask which includes connection handling
+* */
 public class HttpAsyncTask extends AsyncTask<String, Long, String> {
 
   private static final String LOG_TAG = HttpAsyncTask.class.getSimpleName();

@@ -36,6 +36,15 @@ import com.andylahs.steamshots.preferences.AppPreferences;
 
 import java.util.ArrayList;
 
+/*
+* Main activity
+* Serves as a gallery of Steam community screenshots searchable by username or steam id
+* The queries use ScrListAsyncTask to reach my virtual private server.
+* The server is written in Node.js and it's job is to scrape full web pages, parse for useful data,
+* and then return only required data to conserve users' data consumption.
+*
+* */
+
 public class UserScreenshotsActivity extends BaseActivity implements
     ScrReturnListener,
     SearchView.OnQueryTextListener {
@@ -67,11 +76,14 @@ public class UserScreenshotsActivity extends BaseActivity implements
 
     processSearch(screenHeight, savedProfile);
     loadRefreshLayout();
+
+    /*
+    * The fab links to the user's full profile through a WebView activity.
+    * */
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-//        searchView.setIconified(false);
         Intent intent = new Intent(UserScreenshotsActivity.this, ProfileWebViewActivity.class);
         intent.putExtra("profile", AppPreferences.getProfilePreference(getApplicationContext()));
         startActivity(intent);
@@ -97,6 +109,9 @@ public class UserScreenshotsActivity extends BaseActivity implements
   }
 
 
+  /*
+  * Initialise pull down gesture to refresh the list
+  * */
   private void loadRefreshLayout() {
     swipeRefreshLayout.setColorSchemeResources(R.color.blue, R.color.green, R.color.blue_grey);
     swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -125,6 +140,9 @@ public class UserScreenshotsActivity extends BaseActivity implements
   }
 
 
+  /*
+  * Use AsyncTask to start a new search
+  * */
   private boolean processSearch(int screenHeight, String profile) {
     recyclerViewAdapter = new ScreenshotRecyclerViewAdapter(
         UserScreenshotsActivity.this,
@@ -159,6 +177,9 @@ public class UserScreenshotsActivity extends BaseActivity implements
     return true;
   }
 
+  /*
+  * Listener for search query submission
+  * */
   @Override
   public boolean onQueryTextSubmit(String query) {
     AppPreferences.setProfilePreference(this, query);
