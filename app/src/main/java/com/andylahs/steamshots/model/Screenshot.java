@@ -1,6 +1,10 @@
 package com.andylahs.steamshots.model;
 
-public class Screenshot {
+import java.io.Serializable;
+
+public class Screenshot implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   String id;
   String thumbnailLink;
@@ -8,6 +12,10 @@ public class Screenshot {
   String description;
 
   public Screenshot() {
+  }
+
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
   }
 
   public String getId() {

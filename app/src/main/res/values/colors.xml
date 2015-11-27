@@ -11,4 +11,6 @@
     <color name="holder_background_true">#70000000</color>
     <color name="holder_background_false">#00000000</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

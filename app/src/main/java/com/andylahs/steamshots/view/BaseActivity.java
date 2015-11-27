@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.main, menu);
+    getMenuInflater().inflate(R.menu.search, menu);
 
     return true;
   }
@@ -37,17 +37,9 @@ public class BaseActivity extends AppCompatActivity
     // Handle navigation view item clicks here.
     int id = item.getItemId();
 
-    if (id == R.id.nav_camara) {
-      // Handle the camera action
+    if (id == R.id.nav_favourites) {
+
     } else if (id == R.id.nav_gallery) {
-
-    } else if (id == R.id.nav_slideshow) {
-
-    } else if (id == R.id.nav_manage) {
-
-    } else if (id == R.id.nav_share) {
-
-    } else if (id == R.id.nav_send) {
 
     }
 

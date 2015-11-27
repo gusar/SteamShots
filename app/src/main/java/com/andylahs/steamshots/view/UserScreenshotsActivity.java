@@ -3,6 +3,7 @@ package com.andylahs.steamshots.view;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +25,7 @@ import android.widget.SearchView;
 
 import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.controller.HttpReturnListener;
+import com.andylahs.steamshots.controller.RecyclerItemClickListener;
 import com.andylahs.steamshots.controller.ScrListAsyncTask;
 import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.preferences.AppPreferences;
@@ -35,11 +37,12 @@ public class UserScreenshotsActivity extends BaseActivity implements
     SearchView.OnQueryTextListener {
 
   private static final String LOG_TAG = UserScreenshotsActivity.class.getSimpleName();
+  public static final String SCREENSHOT_TRANSFER = "SCREENSHOT_TRANSFER";
   private RecyclerView recyclerView;
   private ScreenshotRecyclerViewAdapter recyclerViewAdapter;
   private SwipeRefreshLayout swipeRefreshLayout;
-  private int screenHeight;
   private SearchView searchView;
+  private int screenHeight;
 
   @Override
 
@@ -49,20 +52,47 @@ public class UserScreenshotsActivity extends BaseActivity implements
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    DisplayMetrics displayMetrics = new DisplayMetrics();
-    WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-    wm.getDefaultDisplay().getMetrics(displayMetrics);
-    screenHeight = displayMetrics.heightPixels;
-
+    screenHeight = getDisplayMetrics();
+    String savedProfile = AppPreferences.getProfilePreference(this);
+    Log.d(LOG_TAG, "Saved Profile: " + savedProfile);
+    setTitle(savedProfile);
 
     swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_swipe_refresh_layout);
     recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
     recyclerView.addItemDecoration(new MarginDecoration(this));
     recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-    String savedProfile = AppPreferences.getProfilePreference(this);
-    Log.d(LOG_TAG, "Saved Profile: " + savedProfile);
-    setTitle(savedProfile);
+
     processSearch(screenHeight, savedProfile);
+    loadRefreshLayout();
+
+    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        searchView.setIconified(false);
+      }
+    });
+
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    drawer.setDrawerListener(toggle);
+    toggle.syncState();
+
+    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    navigationView.setNavigationItemSelectedListener(this);
+  }
+
+
+  private int getDisplayMetrics() {
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+    WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+    wm.getDefaultDisplay().getMetrics(displayMetrics);
+    return displayMetrics.heightPixels;
+  }
+
+
+  private void loadRefreshLayout() {
     swipeRefreshLayout.setColorSchemeResources(R.color.blue, R.color.green, R.color.blue_grey);
     swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override
@@ -78,26 +108,6 @@ public class UserScreenshotsActivity extends BaseActivity implements
         }, 2500);
       }
     });
-
-
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-        searchView.setIconified(false);
-//        Snackbar.make(view, "haha", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-      }
-    });
-
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-    drawer.setDrawerListener(toggle);
-    toggle.syncState();
-
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-    navigationView.setNavigationItemSelectedListener(this);
   }
 
 
@@ -117,6 +127,19 @@ public class UserScreenshotsActivity extends BaseActivity implements
         screenHeight
     );
     recyclerView.setAdapter(recyclerViewAdapter);
+    recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, recyclerView,
+        new RecyclerItemClickListener.OnItemClickListener() {
+          @Override
+          public void onItemClick(View view, int position) {
+            Log.d(LOG_TAG, "Item " + position + "clicked!");
+            Intent intent = new Intent(UserScreenshotsActivity.this, DetailsActivity.class);
+            intent.putExtra(SCREENSHOT_TRANSFER, recyclerViewAdapter.getScreenshot(position));
+            startActivity(intent);
+          }
+        }
+    ));
+    Log.d(LOG_TAG, "< Adapter and Listener Set Up >");
+
     ScrListAsyncTask scrListAsyncTask = new ScrListAsyncTask();
     scrListAsyncTask.setOnHttpReturnListener(this);
     scrListAsyncTask.execute(profile);
@@ -157,7 +180,7 @@ public class UserScreenshotsActivity extends BaseActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.main, menu);
+    getMenuInflater().inflate(R.menu.search, menu);
 
     SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView = (SearchView) menu.findItem(R.id.search).getActionView();
