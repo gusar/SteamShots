@@ -24,8 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.andylahs.steamshots.R;
-import com.andylahs.steamshots.controller.ScrReturnListener;
 import com.andylahs.steamshots.controller.ScrListAsyncTask;
+import com.andylahs.steamshots.controller.ScrReturnListener;
 import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.preferences.AppPreferences;
 
@@ -36,7 +36,6 @@ public class UserScreenshotsActivity extends BaseActivity implements
     SearchView.OnQueryTextListener {
 
   private static final String LOG_TAG = UserScreenshotsActivity.class.getSimpleName();
-  public static final String SCREENSHOT_TRANSFER = "SCREENSHOT_TRANSFER";
   private RecyclerView recyclerView;
   private ScreenshotRecyclerViewAdapter recyclerViewAdapter;
   private SwipeRefreshLayout swipeRefreshLayout;
@@ -199,5 +198,4 @@ public class UserScreenshotsActivity extends BaseActivity implements
 
     return super.onOptionsItemSelected(item);
   }
-
 }

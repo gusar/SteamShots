@@ -12,13 +12,17 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.andylahs.steamshots.R;
-import com.andylahs.steamshots.model.Screenshot;
+import com.andylahs.steamshots.controller.ScrDetailsAsyncTask;
+import com.andylahs.steamshots.controller.StringReturnListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class DetailsActivity extends Activity {
+public class DetailsActivity extends Activity implements StringReturnListener {
   /**
    * Whether or not the system UI should be auto-hidden after
    * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -39,35 +43,54 @@ public class DetailsActivity extends Activity {
   private static final String LOG_TAG = DetailsActivity.class.getSimpleName();
 
   private ImageView mContentView;
-  private View mControlsView;
+//  private View mControlsView;
   private boolean mVisible;
+  private ArrayList<String> largeImageDetails;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_details);
-
-    Intent intent = getIntent();
-    Screenshot screenshot = (Screenshot) intent.getSerializableExtra("PHOTO_TRANSFER");
+    largeImageDetails = new ArrayList<>();
 
     mVisible = true;
-    mControlsView = findViewById(R.id.fullscreen_content_controls);
     mContentView = (ImageView) findViewById(R.id.fullscreen_content);
-//    Picasso.with(this).load(photo.get)
 
-    // Set up the user interaction to manually show or hide the system UI.
-    mContentView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Log.d(LOG_TAG, "CONTENT CLICKED");
-        toggle();
-      }
-    });
+    Intent intent = getIntent();
+    String id = intent.getStringExtra("SCREENSHOT_TRANSFER");
+    Log.d(LOG_TAG, "Received ID by DetailsActivity: " + id);
 
-    // Upon interacting with UI controls, delay any scheduled hide()
-    // operations to prevent the jarring behavior of controls going away
-    // while interacting with the UI.
-    findViewById(R.id.fullscreen_caption).setOnTouchListener(mDelayHideTouchListener);
+    ScrDetailsAsyncTask scrDetailsAsyncTask = new ScrDetailsAsyncTask();
+    scrDetailsAsyncTask.setOnHttpReturnListener(this);
+    scrDetailsAsyncTask.execute(id);
+  }
+
+  @Override
+  public void onHttpReturn(ArrayList<String> stringArrayList) {
+    if (stringArrayList.size() < 1) {
+      Log.d(LOG_TAG, "NO DATA RETURNED");
+    } else {
+      largeImageDetails = stringArrayList;
+      Log.d(LOG_TAG, "Full Resolution: " + largeImageDetails.get(0) + " --> " + largeImageDetails.get(1));
+
+      Picasso.with(this).load(largeImageDetails.get(1))
+          .error(R.drawable.placeholder)
+          .placeholder(R.drawable.placeholder)
+          .into(mContentView);
+      // Set up the user interaction to manually show or hide the system UI.
+      mContentView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Log.d(LOG_TAG, "CONTENT CLICKED");
+          toggle();
+        }
+      });
+
+      // Upon interacting with UI controls, delay any scheduled hide()
+      // operations to prevent the jarring behavior of controls going away
+      // while interacting with the UI.
+//      findViewById(R.id.fullscreen_caption).setOnTouchListener(mDelayHideTouchListener);
+    }
   }
 
   @Override
@@ -109,7 +132,7 @@ public class DetailsActivity extends Activity {
     if (actionBar != null) {
       actionBar.hide();
     }
-    mControlsView.setVisibility(View.GONE);
+//    mControlsView.setVisibility(View.GONE);
     mVisible = false;
 
     // Schedule a runnable to remove the status and navigation bar after a delay
@@ -155,7 +178,7 @@ public class DetailsActivity extends Activity {
       if (actionBar != null) {
         actionBar.show();
       }
-      mControlsView.setVisibility(View.VISIBLE);
+//      mControlsView.setVisibility(View.VISIBLE);
     }
   };
 

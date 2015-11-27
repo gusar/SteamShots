@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,10 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
   private final String LOG_TAG = ScreenshotRecyclerViewAdapter.class.getSimpleName();
   private int screenHeight;
 
-  public class ViewHolder extends RecyclerView.ViewHolder {
+  public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     protected ImageView thumbnail;
     protected TextView caption;
+    Screenshot screenshot;
 
     public ViewHolder(View view) {
       super(view);
@@ -34,6 +36,33 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
       this.thumbnail.getLayoutParams().height = screenHeight / 5;
       this.thumbnail.requestLayout();
       this.caption = (TextView) view.findViewById(R.id.caption);
+      view.setOnClickListener(this);
+    }
+
+    public void setDetails(Screenshot screenshot) {
+      this.screenshot = screenshot;
+      Picasso.with(context)
+          .load(screenshot.getThumbnailLink())
+          .error(R.drawable.placeholder)
+          .placeholder(R.drawable.placeholder_s)
+          .into(this.thumbnail);
+      String description = screenshot.getDescription();
+      if (!(description.equals("null"))) {
+        caption.setText(description);
+        caption.setBackgroundColor(Color.parseColor("#70000000"));
+      } else {
+        caption.setBackgroundColor(Color.parseColor("#00000000"));
+      }
+      Log.d(LOG_TAG, "Binding: " + screenshot.getId());
+    }
+
+    @Override
+    public void onClick(View v) {
+      String id = screenshot.getId();
+      Intent intent = new Intent(context, DetailsActivity.class);
+      intent.putExtra("SCREENSHOT_TRANSFER", id);
+      Log.d(LOG_TAG, "Sending ID to Details Activity: " + id);
+      context.startActivity(intent);
     }
   }
 
@@ -51,37 +80,15 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
 
   @Override
   public void onBindViewHolder(ViewHolder holder, int position) {
-    final Screenshot screenshot = screenshotList.get(position);
-//    Log.d(LOG_TAG, "Processing: " + screenshot.getPageLink() + " --> " + Integer.toString(position));
-
-    Picasso.with(context)
-        .load(screenshot.getThumbnailLink())
-        .error(R.drawable.placeholder)
-        .placeholder(R.drawable.placeholder_s)
-        .into(holder.thumbnail);
-
-    holder.thumbnail.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(context, DetailsActivity.class);
-        intent.putExtra("SCREENSHOT_TRANSFER", screenshot);
-        context.startActivity(intent);
-      }
-    });
-
-    String description = screenshot.getDescription();
-    if (!(description.equals("null"))) {
-      holder.caption.setText(description);
-      holder.caption.setBackgroundColor(Color.parseColor("#70000000"));
-    } else {
-      holder.caption.setBackgroundColor(Color.parseColor("#00000000"));
-    }
+    holder.setDetails(screenshotList.get(position));
   }
+
 
   public void loadScreenshots(ArrayList<Screenshot> newScreenshotList) {
     screenshotList = newScreenshotList;
     notifyDataSetChanged();
   }
+
 
   @Override
   public int getItemCount() {
