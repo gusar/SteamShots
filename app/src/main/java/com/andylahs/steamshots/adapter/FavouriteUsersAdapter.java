@@ -12,9 +12,9 @@ import com.andylahs.steamshots.R;
 
 import java.util.List;
 
-public class FavouriteUsersAdapter extends ArrayAdapter<String>{
+public class FavouriteUsersAdapter extends ArrayAdapter<String> {
 
-  public FavouriteUsersAdapter(Context context, List<String> users){
+  public FavouriteUsersAdapter(Context context, List<String> users) {
     super(context, R.layout.user_row, users);
   }
 
