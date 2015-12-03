@@ -19,8 +19,7 @@ public class ConnectionManager {
       HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
       // Check the connection status
-      if(urlConnection.getResponseCode() == 200)
-      {
+      if(urlConnection.getResponseCode() == 200) {
         // if response code = 200 ok
         InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
 

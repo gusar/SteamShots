@@ -36,7 +36,6 @@ public class ScrListAsyncTask extends HttpAsyncTask {
     screenshotList = new ArrayList<>();
     try {
       JSONArray jsonArray = new JSONArray(stream);
-//      databaseManager.open();
       for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         Screenshot screenshot = new Screenshot();
@@ -48,7 +47,6 @@ public class ScrListAsyncTask extends HttpAsyncTask {
     } catch (JSONException e) {
       Log.e(LOG_TAG, "JSON PROBLEM!!!", e);
     }
-//    databaseManager.close();
     scrReturnListener.onHttpReturn(screenshotList);
   }
 

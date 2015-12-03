@@ -81,7 +81,14 @@ public class DatabaseManager {
 
   public boolean deleteFavouriteUser(String username) {
     try {
-      return database.delete(DatabaseModel.SCREENSHOT_TABLE, DatabaseModel.USERNAME + "='" + username + "'", null) > 0;
+      String q = ("SELECT DISTINCT " + databaseModel.USERNAME + " FROM " + databaseModel.STEAMUSER_TABLE + " WHERE " + databaseModel.USERTAG + " = '" + username + "';");
+      Cursor cursor = database.rawQuery(q, null);
+      cursor.moveToFirst();
+      String s = cursor.getString(0);
+      Log.d(LOG_TAG, "Deleting username: " + s);
+      boolean b = database.delete(databaseModel.STEAMUSER_TABLE, databaseModel.USERNAME + " =? ", new String[]{s}) > 0;
+      if (!b) Log.d(LOG_TAG, "COUDNT DELETE FROM STEAMUSER_TABLE: " + s);
+      return database.delete(databaseModel.SCREENSHOT_TABLE, databaseModel.USERNAME + " =? ", new String[]{s}) > 0;
     } catch (SQLiteException e) {
       Log.e(LOG_TAG, "deleteFavouriteUser error: ", e);
       return false;
@@ -112,9 +119,6 @@ public class DatabaseManager {
     ContentValues contentValue = new ContentValues();
     contentValue.put(DatabaseModel.USERTAG, newName);
     try {
-//      String q = "UPDATE " + databaseModel.STEAMUSER_TABLE + " SET " + databaseModel
-//          .USERTAG + " = '" + newName +"' WHERE " + databaseModel.USERTAG + " = '" + oldName + "';";
-//      database.rawQuery(q, null);
       database.update(DatabaseModel.STEAMUSER_TABLE, contentValue, DatabaseModel.USERTAG + " = " + oldName, null);
     } catch (SQLException e) {
       Log.e("DBManager: ", "", e);

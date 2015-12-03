@@ -37,19 +37,14 @@ public class FavouriteUsersActivity extends AppCompatActivity {
     databaseManager = new DatabaseManager(this);
     databaseManager.open();
     arrayList = databaseManager.fetchFavouriteUsers();
+    for (int i = 0; i < arrayList.size(); i ++) {
+      Log.d(LOG_TAG, "Fetched favourite --> " + arrayList.get(i));
+    }
     databaseManager.close();
 
     adapter = new FavouriteUsersAdapter(FavouriteUsersActivity.this, arrayList);
     ListView favouriteList = (ListView)findViewById(R.id.favourite_list);
     favouriteList.setAdapter(adapter);
-
-    favouriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        AppPreferences.setProfilePreference(FavouriteUsersActivity.this, arrayList.get(position));
-        finish();
-      }
-    });
 
     favouriteList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
       @Override
@@ -90,7 +85,8 @@ public class FavouriteUsersActivity extends AppCompatActivity {
         builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
             databaseManager.open();
-            databaseManager.deleteFavouriteUser(arrayList.get(position));
+            boolean returnVal = databaseManager.deleteFavouriteUser(arrayList.get(position));
+            Log.w("bool","" + returnVal);
             arrayList.remove(position);
             adapter.notifyDataSetChanged();
             databaseManager.close();
@@ -98,6 +94,14 @@ public class FavouriteUsersActivity extends AppCompatActivity {
         });
         builder.show();
         return false;
+      }
+    });
+
+    favouriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        AppPreferences.setProfilePreference(FavouriteUsersActivity.this, arrayList.get(position));
+        finish();
       }
     });
 
