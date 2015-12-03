@@ -62,17 +62,20 @@ public class DatabaseManager {
         contentValue.put(DatabaseModel.THUMBNAIL_LINK, thumbnailLink);
         contentValue.put(DatabaseModel.HQ_LINK, "");
         contentValue.put(DatabaseModel.DESCRIPTION, description);
-
-        ContentValues contentValue2 = new ContentValues();;
-        contentValue2.put(DatabaseModel.USERNAME, username);
-        contentValue2.put(DatabaseModel.USERTAG, username);
-
         try {
           database.insert(DatabaseModel.SCREENSHOT_TABLE, null, contentValue);
-          database.insert(DatabaseModel.STEAMUSER_TABLE, null, contentValue2);
         } catch (SQLException e) {
           Log.e("DBManager: ", "", e);
         }
+      }
+
+      ContentValues contentValues = new ContentValues();
+      contentValues.put(DatabaseModel.USERNAME, username);
+      contentValues.put(DatabaseModel.USERTAG, username);
+      try {
+        database.insert(DatabaseModel.STEAMUSER_TABLE, null, contentValues);
+      } catch (SQLException e) {
+        Log.e("DBManager: ", "", e);
       }
     } else {
       Toast.makeText(context, "User already in favourites", Toast.LENGTH_LONG).show();
@@ -81,7 +84,8 @@ public class DatabaseManager {
 
   public boolean deleteFavouriteUser(String username) {
     try {
-      String q = ("SELECT DISTINCT " + databaseModel.USERNAME + " FROM " + databaseModel.STEAMUSER_TABLE + " WHERE " + databaseModel.USERTAG + " = '" + username + "';");
+      String q = ("SELECT DISTINCT " + databaseModel.USERNAME + " FROM "
+          + databaseModel.STEAMUSER_TABLE + " WHERE " + databaseModel.USERTAG + " = '" + username + "';");
       Cursor cursor = database.rawQuery(q, null);
       cursor.moveToFirst();
       String s = cursor.getString(0);
@@ -99,8 +103,7 @@ public class DatabaseManager {
     ArrayList<String> usernames = new ArrayList<>();
     Cursor cursor;
     try {
-      String q = "SELECT DISTINCT " + databaseModel.USERTAG + " FROM " + databaseModel
-          .STEAMUSER_TABLE;
+      String q = "SELECT " + databaseModel.USERTAG + " FROM " + databaseModel.STEAMUSER_TABLE;
       cursor = database.rawQuery(q, null);
       Log.d(LOG_TAG, "fetchFavouritedUser raw query --> " + q);
       if (cursor.moveToFirst()) {
@@ -115,11 +118,26 @@ public class DatabaseManager {
     return usernames;
   }
 
-  public void update(String oldName, String newName) {
-    ContentValues contentValue = new ContentValues();
-    contentValue.put(DatabaseModel.USERTAG, newName);
+  public String fetchUserByTag(String tag) {
+    String username = "";
     try {
-      database.update(DatabaseModel.STEAMUSER_TABLE, contentValue, DatabaseModel.USERTAG + " = " + oldName, null);
+      String q = ("SELECT DISTINCT " + databaseModel.USERNAME + " FROM "
+          + databaseModel.STEAMUSER_TABLE + " WHERE " + databaseModel.USERTAG + " = '" +tag+ "';");
+      Cursor cursor = database.rawQuery(q, null);
+      cursor.moveToFirst();
+      username = cursor.getString(0);
+    } catch (SQLException e) {
+      Log.e("DBManager: ", "", e);
+    }
+    return username;
+  }
+
+  public void update(String oldTag, String newTag) {
+    ContentValues contentValue = new ContentValues();
+    contentValue.put(databaseModel.USERTAG, newTag);
+    try {
+      Log.d(LOG_TAG, "Old tag: " + oldTag+ " --> New tag: " + newTag);
+      database.update(databaseModel.STEAMUSER_TABLE, contentValue, databaseModel.USERTAG +"=?", new String[]{oldTag});
     } catch (SQLException e) {
       Log.e("DBManager: ", "", e);
     }

@@ -63,7 +63,6 @@ public class FavouriteUsersActivity extends AppCompatActivity {
               public void onClick(DialogInterface dialog, int which) {
                 newTag = editText.getText().toString();
                 databaseManager.open();
-                Log.d(LOG_TAG, "Old tag: " + arrayList.get(position) + " --> New tag: " + newTag);
                 databaseManager.update(arrayList.get(position), newTag);
                 arrayList = databaseManager.fetchFavouriteUsers();
                 databaseManager.close();
@@ -86,6 +85,7 @@ public class FavouriteUsersActivity extends AppCompatActivity {
           public void onClick(DialogInterface dialog, int id) {
             databaseManager.open();
             boolean returnVal = databaseManager.deleteFavouriteUser(arrayList.get(position));
+
             Log.w("bool","" + returnVal);
             arrayList.remove(position);
             adapter.notifyDataSetChanged();
@@ -100,7 +100,9 @@ public class FavouriteUsersActivity extends AppCompatActivity {
     favouriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        AppPreferences.setProfilePreference(FavouriteUsersActivity.this, arrayList.get(position));
+        databaseManager.open();
+        String username = databaseManager.fetchUserByTag(arrayList.get(position));
+        AppPreferences.setProfilePreference(FavouriteUsersActivity.this, username);
         finish();
       }
     });

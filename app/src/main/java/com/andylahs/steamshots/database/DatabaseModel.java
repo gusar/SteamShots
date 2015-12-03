@@ -23,11 +23,11 @@ public class DatabaseModel extends SQLiteOpenHelper {
   static final String DB_NAME = "STEAM_SHOTS.DB";
 
   // database version
-  static final int DB_VERSION = 2;
+  static final int DB_VERSION = 1;
 
   // Creating table query
   private static final String CREATE_TABLE2 = "CREATE TABLE " + STEAMUSER_TABLE + "(" +
-      USERNAME + " TEXT, " + USERTAG + " TEXT);";
+      USERNAME + " TEXT UNIQUE, " + USERTAG + " TEXT UNIQUE);";
 
   private static final String CREATE_TABLE = "CREATE TABLE " + SCREENSHOT_TABLE + "(" +
       USERNAME + " TEXT, " + IMAGE_ID + " TEXT, " + THUMBNAIL_LINK +
