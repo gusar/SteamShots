@@ -14,5 +14,5 @@
         android:id="@+id/doFavourite"
         android:icon="@drawable/ic_favorite_white_48dp"
         android:title="Favourite"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

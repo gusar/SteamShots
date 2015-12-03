@@ -7,11 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.adapter.FavouriteUsersAdapter;
 import com.andylahs.steamshots.database.DatabaseManager;
+import com.andylahs.steamshots.preferences.AppPreferences;
 
 import java.util.ArrayList;
 
@@ -25,7 +27,7 @@ public class FavouriteUsersActivity extends AppCompatActivity {
   private DatabaseManager databaseManager;
   FavouriteUsersAdapter adapter;
   ArrayList<String> arrayList;
-  String newName = "";
+  String newTag = "";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +45,45 @@ public class FavouriteUsersActivity extends AppCompatActivity {
 
     favouriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
-      public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        AppPreferences.setProfilePreference(FavouriteUsersActivity.this, arrayList.get(position));
+        finish();
+      }
+    });
+
+    favouriteList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+      @Override
+      public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long
+          id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(FavouriteUsersActivity.this);
         builder.setMessage("Delete or Update");
         builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
-            databaseManager.open();
-            databaseManager.update(arrayList.get(position), newName);
-            adapter.notifyDataSetChanged();
-            databaseManager.close();
+            final EditText editText = new EditText(FavouriteUsersActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(FavouriteUsersActivity.this);
+            builder.setView(editText);
+            builder.setMessage("Enter new tag");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                newTag = editText.getText().toString();
+                databaseManager.open();
+                Log.d(LOG_TAG, "Old tag: " + arrayList.get(position) + " --> New tag: " + newTag);
+                databaseManager.update(arrayList.get(position), newTag);
+                arrayList = databaseManager.fetchFavouriteUsers();
+                databaseManager.close();
+                adapter.notifyDataSetChanged();
+                startActivity(getIntent());
+                finish();
+              }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+              }
+            });
+            builder.show();
           }
         });
 
@@ -65,10 +97,13 @@ public class FavouriteUsersActivity extends AppCompatActivity {
           }
         });
         builder.show();
+        return false;
       }
     });
 
     Log.d(LOG_TAG, "onCreate Done...");
   }
+
+
 
 }

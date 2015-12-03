@@ -193,6 +193,13 @@ public class UserScreenshotsActivity extends BaseActivity implements
     return processSearch(screenHeight, query);
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    String savedProfile = AppPreferences.getProfilePreference(this);
+    processSearch(screenHeight, savedProfile);
+    setTitle(savedProfile);
+  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {

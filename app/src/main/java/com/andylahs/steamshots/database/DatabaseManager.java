@@ -48,7 +48,7 @@ public class DatabaseManager {
   }
 
   public void insert(String username, ArrayList<Screenshot> screenshots) {
-    String q = "SELECT DISTINCT " + databaseModel.USERNAME + " FROM " + databaseModel.TABLE_NAME;
+    String q = "SELECT DISTINCT " + databaseModel.USERNAME + " FROM " + databaseModel.SCREENSHOT_TABLE;
     if (database.rawQuery(q, null) != null) {
       Log.d(LOG_TAG, "Username: " + username + " Quantity: " + screenshots.size());
       for (int i = 0; i < screenshots.size(); i++) {
@@ -63,8 +63,13 @@ public class DatabaseManager {
         contentValue.put(DatabaseModel.HQ_LINK, "");
         contentValue.put(DatabaseModel.DESCRIPTION, description);
 
+        ContentValues contentValue2 = new ContentValues();;
+        contentValue2.put(DatabaseModel.USERNAME, username);
+        contentValue2.put(DatabaseModel.USERTAG, username);
+
         try {
-          database.insert(DatabaseModel.TABLE_NAME, null, contentValue);
+          database.insert(DatabaseModel.SCREENSHOT_TABLE, null, contentValue);
+          database.insert(DatabaseModel.STEAMUSER_TABLE, null, contentValue2);
         } catch (SQLException e) {
           Log.e("DBManager: ", "", e);
         }
@@ -76,7 +81,7 @@ public class DatabaseManager {
 
   public boolean deleteFavouriteUser(String username) {
     try {
-      return database.delete(DatabaseModel.TABLE_NAME, DatabaseModel.USERNAME + "='" + username + "'", null) > 0;
+      return database.delete(DatabaseModel.SCREENSHOT_TABLE, DatabaseModel.USERNAME + "='" + username + "'", null) > 0;
     } catch (SQLiteException e) {
       Log.e(LOG_TAG, "deleteFavouriteUser error: ", e);
       return false;
@@ -87,7 +92,8 @@ public class DatabaseManager {
     ArrayList<String> usernames = new ArrayList<>();
     Cursor cursor;
     try {
-      String q = "SELECT DISTINCT " + databaseModel.USERNAME + " FROM " + databaseModel.TABLE_NAME;
+      String q = "SELECT DISTINCT " + databaseModel.USERTAG + " FROM " + databaseModel
+          .STEAMUSER_TABLE;
       cursor = database.rawQuery(q, null);
       Log.d(LOG_TAG, "fetchFavouritedUser raw query --> " + q);
       if (cursor.moveToFirst()) {
@@ -104,9 +110,12 @@ public class DatabaseManager {
 
   public void update(String oldName, String newName) {
     ContentValues contentValue = new ContentValues();
-    contentValue.put(DatabaseModel.USERNAME, newName);
+    contentValue.put(DatabaseModel.USERTAG, newName);
     try {
-      database.update(DatabaseModel.TABLE_NAME, contentValue, DatabaseModel.USERNAME + " = " + oldName, null);
+//      String q = "UPDATE " + databaseModel.STEAMUSER_TABLE + " SET " + databaseModel
+//          .USERTAG + " = '" + newName +"' WHERE " + databaseModel.USERTAG + " = '" + oldName + "';";
+//      database.rawQuery(q, null);
+      database.update(DatabaseModel.STEAMUSER_TABLE, contentValue, DatabaseModel.USERTAG + " = " + oldName, null);
     } catch (SQLException e) {
       Log.e("DBManager: ", "", e);
     }
@@ -122,7 +131,7 @@ public class DatabaseManager {
 //    };
 //    Cursor cursor = null;
 //    try {
-//        cursor = database.query(DatabaseModel.TABLE_NAME, columns, "username='" + username +"'", null, null, null, null);
+//        cursor = database.query(DatabaseModel.SCREENSHOT_TABLE, columns, "username='" + username +"'", null, null, null, null);
 //      if (cursor != null) {
 //        cursor.moveToFirst();
 //      }
