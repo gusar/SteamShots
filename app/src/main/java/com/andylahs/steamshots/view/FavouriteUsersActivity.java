@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.adapter.FavouriteUsersAdapter;
-import com.andylahs.steamshots.database.DatabaseManager;
 import com.andylahs.steamshots.preferences.AppPreferences;
 
 import java.util.ArrayList;
