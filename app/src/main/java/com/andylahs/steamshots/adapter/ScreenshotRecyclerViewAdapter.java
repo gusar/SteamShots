@@ -17,11 +17,11 @@ import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.view.DetailsActivity;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import io.realm.RealmList;
 
 public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<ScreenshotRecyclerViewAdapter.ViewHolder> {
 
-  private ArrayList<Screenshot> screenshotList;
+  private RealmList<Screenshot> screenshotList;
   private Context context;
   private final String LOG_TAG = ScreenshotRecyclerViewAdapter.class.getSimpleName();
   private int screenHeight;
@@ -67,7 +67,8 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
     }
   }
 
-  public ScreenshotRecyclerViewAdapter(Context context, ArrayList<Screenshot> screenshotArrayList, int screenHeight) {
+  public ScreenshotRecyclerViewAdapter(Context context, RealmList<Screenshot>
+      screenshotArrayList, int screenHeight) {
     this.context = context;
     this.screenshotList = screenshotArrayList;
     this.screenHeight = screenHeight;
@@ -85,7 +86,7 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
   }
 
 
-  public void loadScreenshots(ArrayList<Screenshot> newScreenshotList) {
+  public void loadScreenshots(RealmList<Screenshot> newScreenshotList) {
     screenshotList = newScreenshotList;
     notifyDataSetChanged();
   }
@@ -96,7 +97,4 @@ public class ScreenshotRecyclerViewAdapter extends RecyclerView.Adapter<Screensh
     return (null != screenshotList ? screenshotList.size() : 0);
   }
 
-  public Screenshot getScreenshot(int position) {
-    return (null != screenshotList ? screenshotList.get(position) : null);
-  }
 }

@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.andylahs.steamshots.model.Screenshot;
+import com.andylahs.steamshots.model.ScreenshotModel;
 
 import java.util.ArrayList;
 
@@ -47,12 +47,13 @@ public class DatabaseManager {
     }
   }
 
-  public void insert(String username, ArrayList<Screenshot> screenshots) {
-    String q = "SELECT DISTINCT " + databaseModel.USERNAME + " FROM " + databaseModel.SCREENSHOT_TABLE;
+  public void insert(String username, ArrayList<ScreenshotModel> screenshots) {
+    String q = "SELECT DISTINCT " + DatabaseModel.USERNAME + " FROM " + DatabaseModel
+        .SCREENSHOT_TABLE;
     if (database.rawQuery(q, null) != null) {
       Log.d(LOG_TAG, "Username: " + username + " Quantity: " + screenshots.size());
       for (int i = 0; i < screenshots.size(); i++) {
-        Screenshot screenshot = screenshots.get(i);
+        ScreenshotModel screenshot = screenshots.get(i);
         String imageId = screenshot.getId();
         String thumbnailLink = screenshot.getThumbnailLink();
         String description = screenshot.getDescription();
@@ -82,17 +83,25 @@ public class DatabaseManager {
     }
   }
 
-  public boolean deleteFavouriteUser(String username) {
+  private String findUserId(String profileTag) {
+    String profileName = "";
+    return profileName;
+  }
+
+  public boolean deleteFavouriteUser(String profileTag) {
     try {
-      String q = ("SELECT DISTINCT " + databaseModel.USERNAME + " FROM "
-          + databaseModel.STEAMUSER_TABLE + " WHERE " + databaseModel.USERTAG + " = '" + username + "';");
+      String q = ("SELECT DISTINCT " + DatabaseModel.USERNAME + " FROM "
+          + DatabaseModel.STEAMUSER_TABLE + " WHERE " + DatabaseModel.USERTAG + " = '" + profileTag
+          + "';");
       Cursor cursor = database.rawQuery(q, null);
       cursor.moveToFirst();
       String s = cursor.getString(0);
       Log.d(LOG_TAG, "Deleting username: " + s);
-      boolean b = database.delete(databaseModel.STEAMUSER_TABLE, databaseModel.USERNAME + " =? ", new String[]{s}) > 0;
+      boolean b = database.delete(DatabaseModel.STEAMUSER_TABLE, DatabaseModel.USERNAME + " =? ",
+          new String[]{s}) > 0;
       if (!b) Log.d(LOG_TAG, "COUDNT DELETE FROM STEAMUSER_TABLE: " + s);
-      return database.delete(databaseModel.SCREENSHOT_TABLE, databaseModel.USERNAME + " =? ", new String[]{s}) > 0;
+      return database.delete(DatabaseModel.SCREENSHOT_TABLE, DatabaseModel.USERNAME + " =? ", new
+          String[]{s}) > 0;
     } catch (SQLiteException e) {
       Log.e(LOG_TAG, "deleteFavouriteUser error: ", e);
       return false;
@@ -103,7 +112,7 @@ public class DatabaseManager {
     ArrayList<String> usernames = new ArrayList<>();
     Cursor cursor;
     try {
-      String q = "SELECT " + databaseModel.USERTAG + " FROM " + databaseModel.STEAMUSER_TABLE;
+      String q = "SELECT " + DatabaseModel.USERTAG + " FROM " + DatabaseModel.STEAMUSER_TABLE;
       cursor = database.rawQuery(q, null);
       Log.d(LOG_TAG, "fetchFavouritedUser raw query --> " + q);
       if (cursor.moveToFirst()) {
@@ -118,11 +127,15 @@ public class DatabaseManager {
     return usernames;
   }
 
+  public Cursor fetchProfileLinks() {
+    return null;
+  }
+
   public String fetchUserByTag(String tag) {
     String username = "";
     try {
-      String q = ("SELECT DISTINCT " + databaseModel.USERNAME + " FROM "
-          + databaseModel.STEAMUSER_TABLE + " WHERE " + databaseModel.USERTAG + " = '" +tag+ "';");
+      String q = ("SELECT DISTINCT " + DatabaseModel.USERNAME + " FROM "
+          + DatabaseModel.STEAMUSER_TABLE + " WHERE " + DatabaseModel.USERTAG + " = '" +tag+ "';");
       Cursor cursor = database.rawQuery(q, null);
       cursor.moveToFirst();
       username = cursor.getString(0);
@@ -134,10 +147,11 @@ public class DatabaseManager {
 
   public void update(String oldTag, String newTag) {
     ContentValues contentValue = new ContentValues();
-    contentValue.put(databaseModel.USERTAG, newTag);
+    contentValue.put(DatabaseModel.USERTAG, newTag);
     try {
       Log.d(LOG_TAG, "Old tag: " + oldTag+ " --> New tag: " + newTag);
-      database.update(databaseModel.STEAMUSER_TABLE, contentValue, databaseModel.USERTAG +"=?", new String[]{oldTag});
+      database.update(DatabaseModel.STEAMUSER_TABLE, contentValue, DatabaseModel.USERTAG +"=?",
+          new String[]{oldTag});
     } catch (SQLException e) {
       Log.e("DBManager: ", "", e);
     }

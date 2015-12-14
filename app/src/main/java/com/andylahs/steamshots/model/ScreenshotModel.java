@@ -1,16 +1,31 @@
 package com.andylahs.steamshots.model;
 
+import java.io.Serializable;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+public class ScreenshotModel implements Serializable {
 
-public class Screenshot extends RealmObject{
+  private static final long serialVersionUID = 1L;
 
-  @PrimaryKey
   String id;
+  String username;
   String thumbnailLink;
   String hqLink;
   String description;
+
+  public ScreenshotModel() {
+  }
+
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
   public String getId() {
     return id;
@@ -43,5 +58,4 @@ public class Screenshot extends RealmObject{
   public void setDescription(String description) {
     this.description = description;
   }
-
 }

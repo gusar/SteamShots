@@ -3,13 +3,13 @@ package com.andylahs.steamshots.async;
 
 import com.andylahs.steamshots.model.Screenshot;
 
-import java.util.ArrayList;
+import io.realm.RealmList;
 
 /*
-* Used to share data between activity and ScrListAsyncTask
+* Used to share data between activity and HttpScrListAsync
 * */
 public interface ScrReturnListener {
 
-  void onHttpReturn(ArrayList<Screenshot> objectList);
+  void onHttpReturn(RealmList<Screenshot> objectList);
 
 }

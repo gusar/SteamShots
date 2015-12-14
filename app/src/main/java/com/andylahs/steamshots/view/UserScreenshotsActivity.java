@@ -28,25 +28,23 @@ import android.widget.SearchView;
 
 import com.andylahs.steamshots.R;
 import com.andylahs.steamshots.adapter.ScreenshotRecyclerViewAdapter;
-import com.andylahs.steamshots.async.ScrListAsyncTask;
-import com.andylahs.steamshots.async.ScrReturnListener;
-import com.andylahs.steamshots.database.DatabaseManager;
+import com.andylahs.steamshots.async.ScreenshotListManager;
 import com.andylahs.steamshots.model.Screenshot;
 import com.andylahs.steamshots.preferences.AppPreferences;
 
-import java.util.ArrayList;
+import io.realm.Realm;
+import io.realm.RealmList;
 
 /*
 * Main activity
 * Serves as a gallery of Steam community screenshots searchable by username or steam id
-* The queries use ScrListAsyncTask to reach my virtual private server.
+* The queries use HttpScrListAsync to reach my virtual private server.
 * The server is written in Node.js and it's job is to scrape full web pages, parse for useful data,
 * and then return only required data to conserve users' data consumption.
 *
 * */
 
 public class UserScreenshotsActivity extends BaseActivity implements
-    ScrReturnListener,
     SearchView.OnQueryTextListener {
 
   private static final String LOG_TAG = UserScreenshotsActivity.class.getSimpleName();
@@ -55,6 +53,9 @@ public class UserScreenshotsActivity extends BaseActivity implements
   private SwipeRefreshLayout swipeRefreshLayout;
   private SearchView searchView;
   private int screenHeight;
+  private Realm realm;
+  private ScreenshotListManager screenshotListManager;
+  private RealmList<Screenshot> scrList;
 
   @Override
 
@@ -63,6 +64,8 @@ public class UserScreenshotsActivity extends BaseActivity implements
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    realm = Realm.getInstance(this);
+    screenshotListManager = ScreenshotListManager.getInstance(realm);
 
     screenHeight = getDisplayMetrics();
     String savedProfile = AppPreferences.getProfilePreference(this);
@@ -146,31 +149,19 @@ public class UserScreenshotsActivity extends BaseActivity implements
   private boolean processSearch(int screenHeight, String profile) {
     recyclerViewAdapter = new ScreenshotRecyclerViewAdapter(
         UserScreenshotsActivity.this,
-        new ArrayList<Screenshot>(),
+        new RealmList<Screenshot>(),
         screenHeight
     );
     recyclerView.setAdapter(recyclerViewAdapter);
-
-    ScrListAsyncTask scrListAsyncTask = new ScrListAsyncTask();
-    scrListAsyncTask.setOnHttpReturnListener(this);
-    scrListAsyncTask.execute(profile);
+    scrList = screenshotListManager.execute(profile);
+    recyclerViewAdapter.loadScreenshots(scrList);
 
     return true;
   }
 
 
-  ArrayList<Screenshot> scrList;
-  @Override
-  public void onHttpReturn(ArrayList<Screenshot> screenshotArrayList) {
-    scrList = new ArrayList<>();
-    if (screenshotArrayList.size() < 1) {
-      Log.d(LOG_TAG, "NO DATA RETURNED");
-    } else {
-      Log.d(LOG_TAG, Integer.toString(screenshotArrayList.size()));
-      scrList = screenshotArrayList;
-    }
-    recyclerViewAdapter.loadScreenshots(screenshotArrayList);
-  }
+
+
 
   @Override
   public boolean onQueryTextChange(String newText) {
@@ -231,10 +222,7 @@ public class UserScreenshotsActivity extends BaseActivity implements
     if (id == R.id.search) {
       return true;
     } else if (id == R.id.doFavourite) {
-      DatabaseManager databaseManager = new DatabaseManager(this);
-      databaseManager.open();
-      databaseManager.insert(AppPreferences.getProfilePreference(this), scrList);
-      databaseManager.close();
+      //Todo: realm transaction for adding to favourites
       CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
       Snackbar.make(coordinatorLayout, "User added to favourites", Snackbar.LENGTH_LONG).show();
       return true;
